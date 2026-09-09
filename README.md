@@ -13,6 +13,10 @@
   <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
 </p>
 
+<p align="center">
+  <img src="docs/images/preview.jpg" alt="幻象工坊 · 架构与效果预览" width="100%">
+</p>
+
 ---
 
 ## 项目简介
