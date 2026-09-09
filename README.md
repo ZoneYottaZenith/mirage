@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/preview.jpg" alt="幻象工坊 · 架构与效果预览" width="100%">
+  <img src="docs/images/Mirage.jpg" alt="幻象工坊 · 架构与效果预览" width="100%">
 </p>
 
 ---
