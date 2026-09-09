@@ -1,0 +1,16 @@
+# 本地开发用：让 `uv run python app.py` 自动创建 .venv 并安装依赖。
+# 依赖与 requirements.txt 保持一致，改依赖时两边都要更新。
+[project]
+name = "chatgpt-mirage-backend"
+version = "0.1.0"
+description = "WanFaAI 独立生图站后端"
+requires-python = ">=3.10"
+dependencies = [
+    "Flask>=3.0,<4",
+    "requests>=2.32,<3",
+    "Pillow>=10.0,<13",
+]
+
+# 这是应用而不是可发布的库，不需要构建安装自身
+[tool.uv]
+package = false

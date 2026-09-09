@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>幻象工坊 · 管理后台</title>
+<style>
+/* ============================================================
+   流体等比缩放变量体系（375px → 1440px）
+   ============================================================ */
+:root {
+  --c-primary:#d6ff5f; --c-primary-active:#c8f13c; --c-primary-disabled:#3a3a1f;
+  --c-ink:#ffffff; --c-body:#cccccc; --c-body-strong:#e6e6e6;
+  --c-muted:#888888; --c-muted-soft:#5a5a5a;
+  --c-hairline:#2a2a2a; --c-hairline-strong:#3a3a3a;
+  --c-canvas:#0a0a0a; --c-surface-soft:#121212; --c-surface-card:#1a1a1a; --c-surface-elevated:#242424;
+  --c-on-primary:#0a0a0a; --c-success:#22c55e; --c-warning:#f59e0b; --c-error:#ef4444; --c-info:#3b82f6;
+  --c-scroll-thumb:rgba(255,255,255,.14); --c-scroll-thumb-hover:rgba(255,255,255,.26);
+  --fs-h1:clamp(2rem,calc(1.2956rem + 3.005vw),4rem);
+  --fs-h2:clamp(1.5rem,calc(1.148rem + 1.502vw),2.5rem);
+  --fs-h3:clamp(1.25rem,calc(1.074rem + 0.751vw),1.75rem);
+  --fs-h4:clamp(1rem,calc(0.912rem + 0.376vw),1.25rem);
+  --fs-body:clamp(0.875rem,calc(0.831rem + 0.188vw),1rem);
+  --fs-small:clamp(0.75rem,calc(0.706rem + 0.188vw),0.875rem);
+  --fs-tiny:clamp(0.6875rem,calc(0.665rem + 0.094vw),0.75rem);
+  --fs-stat:clamp(2rem,calc(1.648rem + 1.502vw),3.5rem);
+  --space-xs:clamp(0.25rem,calc(0.162rem + 0.376vw),0.5rem);
+  --space-sm:clamp(0.5rem,calc(0.412rem + 0.376vw),0.75rem);
+  --space-md:clamp(0.75rem,calc(0.662rem + 0.376vw),1rem);
+  --space-lg:clamp(1rem,calc(0.824rem + 0.751vw),1.5rem);
+  --space-xl:clamp(1.5rem,calc(1.324rem + 0.751vw),2rem);
+  --space-2xl:clamp(2rem,calc(1.648rem + 1.502vw),3rem);
+  --space-3xl:clamp(3rem,calc(2.648rem + 1.502vw),4rem);
+  --space-section:clamp(3rem,calc(1.944rem + 4.507vw),6rem);
+  --pad-card:clamp(1rem,calc(0.824rem + 0.751vw),1.5rem);
+  --pad-card-wide:clamp(1.25rem,calc(0.986rem + 1.127vw),2rem);
+  --icon-box:clamp(2rem,calc(1.912rem + 0.376vw),2.25rem);
+  --icon-mini:clamp(1.25rem,calc(1.162rem + 0.376vw),1.5rem);
+  --card-h:clamp(7.5rem,calc(6.62rem + 3.756vw),10rem);
+  --stat-h:clamp(5rem,calc(4.56rem + 1.878vw),6.25rem);
+  --radius-sm:clamp(0.375rem,calc(0.331rem + 0.188vw),0.5rem);
+  --radius-md:clamp(0.5rem,calc(0.412rem + 0.376vw),0.75rem);
+  --radius-lg:clamp(0.625rem,calc(0.581rem + 0.188vw),0.75rem);
+  --radius-xl:clamp(0.875rem,calc(0.743rem + 0.563vw),1.25rem);
+  --radius-pill:9999px;
+  --grid-cell:clamp(2.5rem,calc(1.972rem + 2.254vw),4rem);
+  --nav-h:clamp(3.25rem,calc(2.986rem + 1.127vw),4rem);
+  --ctrl-h:clamp(2.5rem,calc(2.412rem + 0.376vw),2.75rem);
+}
+html.light {
+  --c-primary:#f2d50b; --c-primary-active:#e0c400; --c-primary-disabled:#d9d9a8;
+  --c-ink:#141414; --c-body:#3a3a3a; --c-body-strong:#1c1c1c;
+  --c-muted:#6a6a6a; --c-muted-soft:#9a9a9a; --c-hairline:#e4e4e2; --c-hairline-strong:#d0d0ce;
+  --c-canvas:#fafafa; --c-surface-soft:#f4f4f2; --c-surface-card:#ffffff; --c-surface-elevated:#ececea;
+  --c-on-primary:#0a0a0a; --c-error:#dc2626; --c-success:#16a34a; --c-warning:#d97706; --c-info:#2563eb;
+  --c-scroll-thumb:rgba(20,20,20,.18); --c-scroll-thumb-hover:rgba(20,20,20,.32);
+}
+html.light .card{box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 8px 24px rgba(0,0,0,.05);}
+*::-webkit-scrollbar{width:8px;height:8px;} *::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:var(--c-scroll-thumb);border-radius:999px;border:2px solid transparent;background-clip:padding-box;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+*::-webkit-scrollbar-thumb:hover{background:var(--c-scroll-thumb-hover);border-width:1px;} *{scrollbar-width:thin;scrollbar-color:var(--c-scroll-thumb) transparent;}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { background:var(--c-canvas); color:var(--c-ink); font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Microsoft YaHei",sans-serif; font-size:var(--fs-body); line-height:1.55; -webkit-font-smoothing:antialiased; }
+body { background-image:linear-gradient(var(--c-hairline) 1px,transparent 1px),linear-gradient(90deg,var(--c-hairline) 1px,transparent 1px); background-size:var(--grid-cell) var(--grid-cell); background-position:center; }
+h1,h2,h3,h4{font-weight:700;letter-spacing:-.5px;} h1{font-size:var(--fs-h1);line-height:1.1;} h2{font-size:var(--fs-h2);line-height:1.15;} h3{font-size:var(--fs-h3);line-height:1.25;} h4{font-size:var(--fs-h4);line-height:1.3;}
+.wrap{max-width:1280px;margin:0 auto;padding:0 var(--space-lg);}
+.card{background:var(--c-surface-card);border:1px solid var(--c-hairline);border-radius:var(--radius-lg);padding:var(--pad-card);min-height:var(--card-h);height:auto;display:flex;flex-direction:column;gap:var(--space-sm);box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 8px 24px rgba(0,0,0,.12);}
+.card-body{flex:1 0 auto;overflow:visible;}
+.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--space-sm);}
+.stat{background:var(--c-canvas);border:1px solid var(--c-hairline);border-radius:var(--radius-lg);min-height:calc(var(--stat-h)*.8);height:auto;display:flex;flex-direction:column;justify-content:center;gap:var(--space-xs);padding:var(--space-sm);}
+.stat-num{font-size:var(--fs-stat);font-weight:700;line-height:1;letter-spacing:-1.5px;color:var(--c-primary);}
+.stat-label{font-size:var(--fs-small);color:var(--c-muted);}
+.input{width:100%;height:var(--ctrl-h);padding:0 var(--space-md);background:var(--c-surface-card);color:var(--c-ink);border:1px solid var(--c-hairline-strong);border-radius:var(--radius-md);font-family:inherit;font-size:var(--fs-body);outline:none;transition:border-color .15s ease;}
+.input:focus{border-color:var(--c-primary);} .input::placeholder{color:var(--c-muted-soft);}
+input[type="number"].input::-webkit-outer-spin-button,input[type="number"].input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;} input[type="number"].input{-moz-appearance:textfield;appearance:textfield;}
+.field{display:flex;flex-direction:column;gap:var(--space-xs);} .field>label{font-size:var(--fs-small);color:var(--c-muted);font-weight:500;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-xs);height:var(--ctrl-h);padding:0 var(--space-lg);border:none;border-radius:var(--radius-md);font-family:inherit;font-size:var(--fs-body);font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;transition:background-color .15s ease;user-select:none;}
+.btn:disabled{cursor:not-allowed;opacity:.5;}
+.btn-primary{background:var(--c-primary);color:var(--c-on-primary);} .btn-primary:hover:not(:disabled){background:var(--c-primary-active);}
+.btn-secondary{background:var(--c-surface-elevated);color:var(--c-ink);border:1px solid var(--c-hairline-strong);} .btn-secondary:hover:not(:disabled){background:var(--c-hairline-strong);}
+.btn-danger{background:transparent;color:var(--c-error);border:1px solid var(--c-hairline-strong);} .btn-danger:hover:not(:disabled){background:rgba(239,68,68,.12);}
+.btn-mini{height:var(--icon-mini);padding:0 var(--space-sm);font-size:var(--fs-small);border-radius:var(--radius-sm);}
+.btn-link{background:transparent;border:none;color:var(--c-ink);font:inherit;font-weight:500;font-size:var(--fs-body);cursor:pointer;padding:var(--space-xs) var(--space-sm);display:inline-flex;align-items:center;gap:6px;}
+.btn-link:hover{color:var(--c-primary);}
+.btn svg{width:15px;height:15px;flex-shrink:0;} .btn-link svg{width:15px;height:15px;vertical-align:-3px;margin-right:4px;}
+.op-icon{background:var(--c-surface-soft);color:var(--c-ink);border:1px solid var(--c-hairline);border-radius:var(--radius-sm);width:calc(var(--ctrl-h)*.8);height:calc(var(--ctrl-h)*.8);font-size:var(--fs-body);cursor:pointer;line-height:1;display:inline-flex;align-items:center;justify-content:center;transition:color .15s ease,border-color .15s ease,background .15s ease;}
+.op-icon:hover{border-color:var(--c-primary);color:var(--c-primary);}
+.op-icon.danger:hover{border-color:var(--c-error);color:var(--c-error);}
+.op-icon svg{width:15px;height:15px;display:block;}
+.nav{position:sticky;top:0;z-index:100;background:rgba(10,10,10,.72);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid var(--c-hairline);height:var(--nav-h);display:flex;align-items:center;}
+html.light .nav{background:rgba(250,250,250,.72);}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 var(--space-lg);width:100%;display:flex;align-items:center;justify-content:space-between;gap:var(--space-md);}
+.brand{display:flex;align-items:center;gap:var(--space-sm);font-size:var(--fs-h4);font-weight:700;letter-spacing:-.5px;white-space:nowrap;flex:1 1 auto;min-width:0;}
+.brand-mark{width:1.4rem;height:1.4rem;color:var(--c-primary);display:inline-block;flex-shrink:0;}
+main{padding:calc(var(--space-section)*.32) 0;} .stack{display:flex;flex-direction:column;gap:calc(var(--space-xl)*.38);}
+.section-head{display:flex;align-items:baseline;gap:var(--space-sm);flex-wrap:wrap;} .section-head h3{margin-right:auto;} .section-sub{color:var(--c-muted);font-size:var(--fs-small);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-sm);} .form-grid .full{grid-column:1/-1;}
+/* 中转站管理 */
+.prov-form{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:var(--space-sm);align-items:end;}
+.model-form{grid-template-columns:1fr auto;}
+.prov-form-actions{display:flex;align-items:flex-end;gap:var(--space-sm);}
+.prov-list{display:flex;flex-direction:column;gap:var(--space-sm);}
+.prov-empty{color:var(--c-muted);font-size:var(--fs-small);padding:var(--space-sm) 0;text-align:center;}
+.prov-item{display:flex;align-items:center;gap:var(--space-md);padding:var(--space-sm) var(--space-md);border:1px solid var(--c-hairline);border-radius:var(--radius-lg);background:var(--c-surface-soft);position:relative;z-index:1;}
+.prov-item.active{border-color:var(--c-primary);}
+.prov-actions{display:flex;align-items:center;gap:var(--space-sm);flex-shrink:0;position:relative;z-index:2;}
+.prov-radio{width:calc(var(--ctrl-h)*.62);height:calc(var(--ctrl-h)*.62);flex-shrink:0;border-radius:50%;border:2px solid var(--c-hairline-strong);display:grid;place-items:center;cursor:pointer;margin-right:var(--space-sm);}
+.prov-item.active .prov-radio{border-color:var(--c-primary);}
+.prov-radio::after{content:"";width:45%;height:45%;border-radius:50%;background:var(--c-primary);opacity:0;}
+.prov-item.active .prov-radio::after{opacity:1;}
+.prov-main{flex:1 1 auto;min-width:0;}
+.prov-title{display:flex;align-items:center;gap:var(--space-sm);}
+.prov-badge{font-size:var(--fs-small);font-weight:600;color:var(--c-primary);}
+.prov-note-inline{font-size:var(--fs-small);color:var(--c-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.prov-meta{display:flex;align-items:center;gap:var(--space-md);margin-top:.15rem;min-width:0;}
+.prov-meta .prov-url{flex:1 1 auto;min-width:0;}
+.prov-url{font-size:var(--fs-small);color:var(--c-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.prov-kv{font-size:var(--fs-small);color:var(--c-muted);white-space:nowrap;flex-shrink:0;}
+/* 生图模型设置 */
+.model-test-result{margin-top:var(--space-sm);padding:var(--space-sm) var(--space-md);border-radius:var(--radius-md);border:1px solid var(--c-hairline);background:var(--c-surface-soft);font-size:var(--fs-small);line-height:1.6;}
+.model-test-result.ok{border-color:var(--c-success);}
+.model-test-result.err{border-color:var(--c-error);}
+.model-test-result.warn{border-color:var(--c-warning);}
+.model-test-result .mt-msg{font-weight:600;}
+.model-test-result.ok .mt-msg{color:var(--c-success);}
+.model-test-result.err .mt-msg{color:var(--c-error);}
+.model-test-result.warn .mt-msg{color:var(--c-warning);}
+.model-chips{display:flex;flex-wrap:wrap;gap:var(--space-xs);margin-top:var(--space-xs);max-height:9rem;overflow-y:auto;}
+.model-chip{padding:.1rem .45rem;border:1px solid var(--c-hairline);border-radius:var(--radius-sm);font-size:var(--fs-tiny);color:var(--c-body);background:var(--c-surface-card);}
+.model-chip.hit{border-color:var(--c-primary);color:var(--c-primary);font-weight:700;}
+/* 价格设置 */
+.price-form{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:var(--space-sm);align-items:end;}
+.price-actions{display:flex;align-items:flex-end;}
+/* 公告设置 */
+.notice-form{display:grid;grid-template-columns:1fr auto;gap:var(--space-sm);align-items:end;}
+.notice-form textarea{resize:none;min-height:3rem;line-height:1.5;padding:var(--space-sm) var(--space-md);scrollbar-width:none;}
+.notice-form textarea::-webkit-scrollbar{display:none;width:0;height:0;}
+.notice-actions{display:flex;align-items:flex-end;}
+/* 按钮交互反馈：按下缩放；hover 由各 button 自带（secondary/danger/primary），避免整块变黑文字看不清 */
+.btn:not(:disabled):active{transform:scale(.97);}
+.prov-actions .btn{transition:background-color .15s ease,transform .12s ease;}
+/* 测试进行中：loading 弹框 */
+.test-loading{display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-sm) 0;}
+.test-loading .spin{width:16px;height:16px;border:2px solid var(--c-hairline-strong);border-top-color:var(--c-primary);border-radius:50%;animation:test-spin .8s linear infinite;flex-shrink:0;}
+@keyframes test-spin{to{transform:rotate(360deg);}}
+.test-result{font-size:var(--fs-body);font-weight:600;}
+.test-result.ok{color:var(--c-success);}
+.test-result.err{color:var(--c-error);}
+.test-models{margin-top:var(--space-md);font-size:var(--fs-small);color:var(--c-muted);}
+.model-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:var(--space-xs);}
+.model-chip{padding:2px 8px;border:1px solid var(--c-hairline-strong);border-radius:999px;background:var(--c-surface-soft);color:var(--c-ink);font-size:var(--fs-small);}
+.gen-row{display:flex;align-items:flex-end;gap:var(--space-md);flex-wrap:wrap;} .gen-row .field{flex:1 1 180px;} .gen-row .gen-chips{flex:0 1 auto;} .gen-btn-wrap{margin-left:auto;}
+.opt-row{display:flex;flex-wrap:wrap;gap:var(--space-sm);}
+.opt-chip{height:var(--ctrl-h);padding:0 var(--space-md);border-radius:var(--radius-md);border:1px solid var(--c-hairline-strong);background:var(--c-surface-card);color:var(--c-ink);font:inherit;font-size:var(--fs-small);font-weight:600;cursor:pointer;transition:all .15s ease;}
+.opt-chip:hover{border-color:var(--c-primary);color:var(--c-primary);}
+.opt-chip.active{background:var(--c-primary);color:var(--c-on-primary);border-color:var(--c-primary);}
+.gen-result{display:flex;flex-direction:column;gap:var(--space-sm);border-top:1px solid var(--c-hairline);padding-top:var(--space-md);}
+.gen-result-item{display:flex;align-items:center;gap:var(--space-sm);background:var(--c-surface-soft);border:1px solid var(--c-hairline);border-radius:var(--radius-sm);padding:var(--space-sm) var(--space-md);font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:var(--fs-small);color:var(--c-primary);transition:border-color .15s ease,background-color .15s ease;}
+.gen-result-item:hover{border-color:var(--c-primary);background:var(--c-surface-elevated);}
+.filter-bar{display:flex;gap:var(--space-sm);align-items:center;flex-wrap:wrap;margin-bottom:var(--space-sm);}
+.filter-actions{display:flex;align-items:center;gap:var(--space-sm);flex:1 1 auto;min-width:0;} #filter-kw{flex:1 1 200px;max-width:220px;}
+.key-list{display:flex;flex-direction:column;gap:var(--space-xs);height:640px;overflow-y:auto;padding-right:4px;}
+.key-row{display:flex;flex-direction:column;gap:var(--space-xs);background:var(--c-surface-soft);border:1px solid var(--c-hairline);border-radius:var(--radius-md);padding:var(--space-sm) var(--space-md);transition:border-color .15s ease;}
+.key-row:hover{border-color:var(--c-primary);}
+.key-row-top{display:flex;align-items:center;gap:var(--space-sm);}
+.key-code{font-family:"JetBrains Mono",ui-monospace,"Cascadia Code",Consolas,monospace;font-size:var(--fs-body);color:var(--c-body-strong);flex:1 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.key-row-actions{display:flex;align-items:center;gap:var(--space-sm);flex-shrink:0;} .key-ops{display:flex;align-items:center;gap:var(--space-sm);}
+.key-meta{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-sm);color:var(--c-muted);font-size:var(--fs-small);}
+.tx-log{margin-top:2px;font-family:"JetBrains Mono",ui-monospace,"Cascadia Code",Consolas,monospace;font-size:var(--fs-tiny);color:var(--c-muted);background:var(--c-surface-elevated);border:1px solid var(--c-hairline);border-radius:var(--radius-sm);padding:var(--space-xs) var(--space-sm);white-space:pre-wrap;word-break:break-word;}
+.tx-log-err{color:var(--c-error);border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.08);}
+.tx-provider{margin-top:4px;font-size:var(--fs-tiny);color:var(--c-muted);line-height:1.5;word-break:break-word;}
+.tx-provider::before{content:"● ";color:var(--c-accent,#67e05f);}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:var(--space-xs) var(--space-md);border-radius:var(--radius-pill);font-size:var(--fs-tiny);font-weight:600;letter-spacing:.5px;white-space:nowrap;border:1px solid transparent;}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.85;flex-shrink:0;}
+.badge-ok{background:rgba(34,197,94,.15);color:var(--c-success);border-color:rgba(34,197,94,.35);}
+.badge-warn{background:var(--c-surface-elevated);color:var(--c-muted);border-color:var(--c-hairline-strong);}
+.badge-exp{background:rgba(239,68,68,.15);color:var(--c-error);border-color:rgba(239,68,68,.35);}
+.shot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:var(--space-sm);height:560px;overflow-y:auto;padding-right:4px;grid-auto-rows:min-content;align-content:start;}
+.shot-limit-row{display:flex;align-items:center;gap:var(--space-sm);margin-bottom:var(--space-md);flex-wrap:wrap;}
+.shot-limit-row .field{width:auto;margin:0;flex:0 0 auto;flex-direction:row;align-items:center;gap:var(--space-sm);}
+.shot-limit-row .field>label{flex:0 0 auto;white-space:nowrap;}
+/* 三个按钮等宽平分剩余空间，撑满整行 */
+.shot-limit-row .btn{flex:1 1 0;min-width:0;}
+/* btn-primary 默认无边框，而 secondary/danger 有 1px 边框，并排时会差 2px。
+   这里补一个透明边框，让三个按钮外框尺寸完全一致。 */
+.shot-limit-row .btn-primary{border:1px solid transparent;}
+/* 输入框 + 右侧按钮（如 API Key 的复制） */
+.input-with-btn{display:flex;gap:var(--space-sm);align-items:center;}
+.input-with-btn .input{flex:1 1 auto;min-width:0;}
+.input-with-btn .btn{flex:0 0 auto;}
+.shot-card{border:1px solid var(--c-hairline);border-radius:var(--radius-md);overflow:hidden;background:var(--c-surface-soft);transition:border-color .15s;} .shot-card:hover{border-color:var(--c-primary);}
+.shot-card img{width:100%;height:100px;object-fit:contain;display:block;background:var(--c-surface-elevated);cursor:zoom-in;}
+.shot-time{padding:4px 8px;font-size:var(--fs-tiny);color:var(--c-muted);display:flex;align-items:center;gap:6px;}
+.shot-time .shot-size{margin-left:auto;color:var(--c-muted-soft);font-variant-numeric:tabular-nums;}
+.shot-del{border:none;background:transparent;color:var(--c-muted);cursor:pointer;font-size:13px;line-height:1;padding:2px 5px;border-radius:var(--radius-sm);}
+.shot-del:hover{color:var(--c-error);background:var(--c-surface-soft);}
+/* 卡片底部操作按钮：复制提示词 / 下载 / 复制图片 */
+.shot-actions{display:flex;gap:4px;padding:0 6px 6px;}
+.shot-actions button{flex:1;padding:3px 4px;border:1px solid var(--c-hairline);border-radius:var(--radius-sm);background:var(--c-surface-card);color:var(--c-muted);font-size:var(--fs-tiny);cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s;}
+.shot-actions button:hover{border-color:var(--c-primary);color:var(--c-primary);}
+.shot-actions button:disabled{opacity:.4;cursor:not-allowed;}
+.shot-actions button:disabled:hover{border-color:var(--c-hairline);color:var(--c-muted);}
+/* 全屏查看层的底部操作条 */
+/* 全屏查看层的底部操作条 */
+.shot-fs-footer{position:absolute;left:0;right:0;bottom:20px;display:flex;flex-direction:column;align-items:center;gap:var(--space-sm);padding:0 var(--space-lg);pointer-events:none;}
+.shot-fs-prompt{max-width:min(72rem,100%);margin:0;color:rgba(255,255,255,.82);font-size:var(--fs-small);line-height:1.5;text-align:center;text-shadow:0 .1rem .4rem rgba(0,0,0,.9);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:auto;}
+.shot-fs-prompt[hidden]{display:none;}
+.shot-fs-actions{display:flex;gap:8px;z-index:2;pointer-events:auto;}
+.shot-fs-actions button{padding:8px 16px;border:1px solid rgba(255,255,255,.3);border-radius:var(--radius-md);background:rgba(0,0,0,.55);color:#fff;font-size:var(--fs-small);cursor:pointer;white-space:nowrap;}
+.shot-fs-actions button:hover{border-color:var(--c-primary);color:var(--c-primary);background:rgba(0,0,0,.7);}
+.shot-fs-actions button:disabled{opacity:.4;cursor:not-allowed;}
+/* 监控图全屏查看层（当前页展示，不跳新页） */
+.shot-fs{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:var(--space-lg);}
+.shot-fs[hidden]{display:none;}
+.shot-fs img{max-width:100%;max-height:100%;border-radius:var(--radius-md);cursor:grab;transform-origin:center;user-select:none;-webkit-user-select:none;}
+.shot-fs .fs-close{position:absolute;top:16px;right:16px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.55);color:#fff;font-size:18px;line-height:1;cursor:pointer;}
+.shot-fs .fs-close:hover{background:rgba(255,255,255,.18);}
+.empty{text-align:center;color:var(--c-muted);padding:var(--space-2xl) 0;font-size:var(--fs-body);display:flex;flex-direction:column;align-items:center;gap:var(--space-sm);}
+.empty::before{content:"◈";font-size:var(--fs-h3);color:var(--c-hairline-strong);}
+#toast{position:fixed;top:4.6rem;left:50%;transform:translateX(-50%) translateY(-8px);background:var(--c-surface-elevated);color:var(--c-ink);border:1px solid var(--c-hairline-strong);border-radius:var(--radius-md);padding:var(--space-sm) var(--space-lg);font-size:var(--fs-body);font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.45);white-space:nowrap;max-width:76vw;overflow:hidden;text-overflow:ellipsis;opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:2000;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);} #toast.ok{border-color:var(--c-success);color:var(--c-success);} #toast.err{border-color:var(--c-error);color:var(--c-error);}
+#login-view{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:var(--space-lg);}
+.login-card{width:min(100%,420px);background:var(--c-surface-card);border:1px solid var(--c-hairline);border-radius:var(--radius-xl);padding:var(--space-2xl);display:flex;flex-direction:column;gap:var(--space-lg);min-height:var(--card-h);height:auto;}
+.login-card h1{font-size:var(--fs-h2);} .login-hint{color:var(--c-muted);font-size:var(--fs-small);}
+.dd{position:relative;display:inline-block;} .dd-btn{display:inline-flex;align-items:center;justify-content:space-between;gap:var(--space-sm);height:var(--ctrl-h);padding:0 var(--space-sm);min-width:0;background:var(--c-surface-card);color:var(--c-ink);border:1px solid var(--c-hairline-strong);border-radius:var(--radius-md);font-family:inherit;font-size:var(--fs-body);cursor:pointer;transition:border-color .15s ease;}
+.dd-btn:hover{border-color:var(--c-primary);} .dd-btn svg{width:14px;height:14px;color:var(--c-muted);transition:transform .15s ease;} .dd.open .dd-btn svg{transform:rotate(180deg);}
+.dd-menu{position:absolute;top:calc(100%+4px);left:0;min-width:100%;z-index:60;background:var(--c-surface-elevated);border:1px solid var(--c-hairline-strong);border-radius:var(--radius-md);padding:var(--space-xs);box-shadow:0 8px 24px rgba(0,0,0,.35);display:flex;flex-direction:column;}
+.dd-opt{display:block;width:100%;text-align:left;background:transparent;border:none;color:var(--c-body);padding:var(--space-xs) var(--space-sm);border-radius:var(--radius-sm);font-size:var(--fs-small);font-family:inherit;cursor:pointer;white-space:nowrap;}
+.dd-opt:hover{background:var(--c-surface-soft);color:var(--c-ink);} .dd-opt.selected{color:var(--c-primary);font-weight:600;}
+.pager{display:flex;align-items:center;gap:var(--space-sm);justify-content:center;margin-top:var(--space-md);} .pager .pager-info{color:var(--c-muted);font-size:var(--fs-small);}
+.pager-jump{display:inline-flex;align-items:center;gap:2px;} .pager-input{width:52px;height:calc(var(--ctrl-h)*.86);padding:0 4px;text-align:center;font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:var(--fs-small);-moz-appearance:textfield;appearance:textfield;}
+.pager-input::-webkit-outer-spin-button,.pager-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.modal-mask{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:var(--space-lg);}
+.modal{width:min(100%,440px);background:var(--c-surface-card);border:1px solid var(--c-hairline-strong);border-radius:var(--radius-lg);padding:var(--space-lg);box-shadow:0 12px 40px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:var(--space-md);}
+.modal-title{font-size:var(--fs-h4);font-weight:700;color:var(--c-body-strong);} .modal-body{font-size:var(--fs-body);color:var(--c-body);line-height:1.6;} .modal-body code{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;background:var(--c-surface-soft);border:1px solid var(--c-hairline);padding:1px 6px;border-radius:var(--radius-sm);color:var(--c-primary);font-size:var(--fs-small);word-break:break-all;}
+.modal-actions{display:flex;justify-content:flex-end;gap:var(--space-sm);flex-wrap:wrap;} .modal-actions .btn{height:30px;padding:0 var(--space-sm);font-size:var(--fs-small);border-radius:var(--radius-sm);}
+[hidden]{display:none!important;}
+/* 页面缩放控件：固定右下角，自身不随页面缩放 */
+#page-zoom-ctl{position:fixed;right:14px;bottom:14px;z-index:1500;display:flex;align-items:center;gap:2px;padding:4px 8px;background:var(--c-surface-elevated);border:1px solid var(--c-hairline-strong);border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.35);user-select:none;}
+#page-zoom-ctl .pz-btn{width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--c-hairline-strong);background:var(--c-surface-card);color:var(--c-ink);border-radius:50%;font-size:14px;cursor:pointer;line-height:1;}
+#page-zoom-ctl .pz-btn:hover{border-color:var(--c-primary);color:var(--c-primary);}
+#page-zoom-ctl .pz-val{min-width:44px;text-align:center;font-size:12px;font-weight:600;color:var(--c-body-strong);cursor:pointer;}
+@media (max-width:820px){ .stats-grid{grid-template-columns:repeat(3,1fr);} .form-grid{grid-template-columns:1fr;} .prov-form{grid-template-columns:1fr 1fr;} }
+@media (max-width:540px){ .gen-row{flex-direction:row;flex-wrap:wrap;align-items:flex-end;} .gen-row .field{flex:1 1 0;min-width:0;} .gen-row .gen-chips{flex:1 1 100%;} .gen-btn-wrap{margin-left:auto;} .gen-btn-wrap .btn{padding:0 var(--space-sm);} .wrap{padding:0 var(--space-sm);} .card{padding:var(--space-sm);} .filter-actions{flex-wrap:nowrap;overflow-x:auto;gap:6px;} .filter-actions>*{flex-shrink:0;} #filter-kw{flex:1 1 100%;max-width:none;margin-top:2px;} .prov-form{grid-template-columns:1fr;} .prov-form-actions .btn{width:100%;} }
+/* 移动端：中转站卡片紧凑排列，radio 与内容同排、按钮单独一行，PC 保持横向 */
+@media (max-width:640px){
+  /* 监控缓存的说明文字占地方，移动端直接隐藏 */
+  .shot-hint{display:none;}
+  .prov-form{grid-template-columns:1fr;}
+  .prov-form-actions .btn{width:100%;}
+  .prov-item{flex-wrap:nowrap;align-items:center;gap:var(--space-sm);padding:var(--space-sm) var(--space-sm);}
+  .prov-main{flex:1 1 auto;min-width:0;}
+  .prov-title{flex-wrap:wrap;gap:var(--space-xs);}
+  .prov-meta{flex-wrap:wrap;gap:var(--space-xs);}
+  .prov-actions{flex:1 1 100%;display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-xs);margin-top:var(--space-xs);}
+}
+</style>
+</head>
+<body>
+
+<!-- 登录页 -->
+<div id="login-view">
+  <div class="login-card">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(335 12 12) translate(12 12) scale(0.82) translate(-12 -12)"><path fill="currentColor" d="m18.723 19.748-1.73 1.493H.678L0 18.77l10.63-9.343.542 6.635h8.701a3.649 3.649 0 0 1-1.15 3.686zM5.277 4.252l1.73-1.493h16.316L24 5.23l-10.63 9.343-.542-6.635H4.129a3.648 3.648 0 0 1 1.148-3.686Z"/></g></svg>
+      幻象工坊
+    </div>
+    <div><h1>管理员登录</h1><p class="login-hint">输入管理员密码进入后台管理</p></div>
+    <div class="field"><label for="login-pwd">管理员密码</label><input id="login-pwd" class="input" type="password" placeholder="请输入密码" autocomplete="current-password"></div>
+    <button id="btn-login" class="btn btn-primary">登 录</button>
+    <div id="login-msg" class="login-hint" style="color:var(--c-error)" hidden></div>
+  </div>
+</div>
+
+<!-- 主界面 -->
+<div id="app-view" hidden>
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(335 12 12) translate(12 12) scale(0.82) translate(-12 -12)"><path fill="currentColor" d="m18.723 19.748-1.73 1.493H.678L0 18.77l10.63-9.343.542 6.635h8.701a3.649 3.649 0 0 1-1.15 3.686zM5.277 4.252l1.73-1.493h16.316L24 5.23l-10.63 9.343-.542-6.635H4.129a3.648 3.648 0 0 1 1.148-3.686Z"/></g></svg>
+        幻象工坊 · 管理后台
+      </div>
+      <div style="display:flex;align-items:center;gap:var(--space-md)">
+        <button id="btn-theme" class="btn-link"></button>
+        <button id="btn-logout" class="btn-link">退出登录</button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="wrap stack">
+
+      <!-- 统计区 -->
+      <div class="stats-grid">
+        <div class="stat"><div class="stat-num" id="s-codes">–</div><div class="stat-label">激活码总数</div></div>
+        <div class="stat"><div class="stat-num" id="s-unused">–</div><div class="stat-label">未兑换</div></div>
+        <div class="stat"><div class="stat-num" id="s-usage">–</div><div class="stat-label">累计调用</div></div>
+        <div class="stat"><div class="stat-num" id="s-accounts">–</div><div class="stat-label">注册用户数</div></div>
+        <div class="stat"><div class="stat-num" id="s-balance">–</div><div class="stat-label">账户总额度</div></div>
+        <div class="stat"><div class="stat-num" id="s-spent">–</div><div class="stat-label">累计消费</div></div>
+      </div>
+
+      <!-- 中转站管理 -->
+      <section class="card">
+        <div class="section-head"><h3>中转站管理</h3><span class="section-sub" id="prov-count"></span></div>
+        <div class="card-body stack" style="gap:var(--space-md)">
+          <div class="prov-form">
+            <div class="field"><label for="pv-url">中转站地址 (URL)</label><input id="pv-url" class="input" placeholder="https://你的中转站地址（自动补全接口路径）"></div>
+            <div class="field"><label for="pv-key">API Key</label><input id="pv-key" class="input" type="password" placeholder="sk-..."></div>
+            <div class="field"><label for="pv-model">模型 ID（可留空）</label><input id="pv-model" class="input" placeholder="留空 = 使用全局默认"></div>            <div class="prov-form-actions"><button id="btn-add-prov" class="btn btn-primary">添加中转站</button></div>
+          </div>
+          <div id="prov-list" class="prov-list"><div class="prov-empty">加载中……</div></div>
+        </div>
+      </section>
+
+      <!-- 生图模型 -->
+      <section class="card">
+        <div class="section-head"><h3>生图模型</h3><span class="section-sub">未单独设置模型的中转站都会用这个 ID · 用户端不感知</span></div>
+        <div class="card-body stack" style="gap:var(--space-md)">
+          <div class="prov-form model-form">
+            <div class="field"><input id="md-model" class="input" placeholder="gpt-image-2.5" aria-label="默认模型 ID"></div>
+            <div class="prov-form-actions">
+              <button id="btn-save-model" class="btn btn-primary">保存</button>
+              <button id="btn-test-model" class="btn btn-secondary">测试可用性</button>
+            </div>
+          </div>
+          <div id="md-result" class="model-test-result" hidden></div>
+        </div>
+      </section>
+
+      <!-- 价格设置 -->
+      <section class="card">
+        <div class="section-head"><h3>价格设置</h3><span class="section-sub">美元/张 · 保存后用户端将动态生效，无需刷新</span></div>
+        <div class="card-body">
+          <div class="price-form">
+            <div class="field"><label for="price-1k">1K 单价</label><input id="price-1k" class="input" type="number" min="0" step="0.01"></div>
+            <div class="field"><label for="price-2k">2K 单价</label><input id="price-2k" class="input" type="number" min="0" step="0.01"></div>
+            <div class="field"><label for="price-4k">4K 单价</label><input id="price-4k" class="input" type="number" min="0" step="0.01"></div>
+            <div class="price-actions"><button id="btn-save-price" class="btn btn-primary">保存价格</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 公告设置 -->
+      <section class="card">
+        <div class="section-head"><h3>公告设置</h3><span class="section-sub">用户页底部滚动显示 · 留空则不显示公告条</span></div>
+        <div class="card-body">
+          <div class="notice-form">
+            <textarea id="notice-text" class="input" rows="2" placeholder="输入公告文案，留空隐藏公告条"></textarea>
+            <div class="notice-actions"><button id="btn-save-notice" class="btn btn-primary">保存公告</button></div>
+          </div>
+        </div>
+      </section>
+      <!-- 购买链接设置 -->
+      <section class="card">
+        <div class="section-head"><h3>购买链接设置</h3><span class="section-sub">用户兑换弹窗「购买额度」按钮跳转地址 · 留空则不显示该按钮</span></div>
+        <div class="card-body">
+          <div class="notice-form">
+            <input id="purchase-url" class="input" type="url" placeholder="https://… 留空则不显示购买按钮">
+            <div class="notice-actions"><button id="btn-save-purchase" class="btn btn-primary">保存购买链接</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 生成激活码 -->
+      <section class="card">
+        <div class="section-head"><h3>生成激活码</h3><span class="section-sub">每个码一个美元额度</span></div>
+        <div class="card-body stack">
+          <div class="gen-row">
+            <div class="field gen-chips"><label>单张额度（一键）</label>
+              <div class="opt-row" id="opt-row">
+                <button class="opt-chip" data-amt="1">$1.00</button>
+                <button class="opt-chip" data-amt="2">$2.00</button>
+                <button class="opt-chip" data-amt="3">$3.00</button>
+                <button class="opt-chip" data-amt="4">$4.00</button>
+                <button class="opt-chip" data-amt="5">$5.00</button>
+              </div>
+            </div>
+            <div class="field"><label for="gen-count">生成数量</label><input id="gen-count" class="input" type="number" min="1" max="200" value="1"></div>
+            <div class="field"><label for="gen-amount">每个额度（$）</label><input id="gen-amount" class="input" type="number" min="0.01" step="0.01" value="1"></div>
+            <div class="gen-btn-wrap"><button id="btn-gen" class="btn btn-primary">生成激活码</button></div>
+          </div>
+          <div id="gen-result" class="gen-result" hidden></div>
+        </div>
+      </section>
+
+      <!-- 激活码管理 -->
+      <section class="card">
+        <div class="section-head"><h3>激活码管理</h3><span class="section-sub" id="list-count"></span></div>
+        <div class="card-body">
+          <div class="filter-bar">
+            <div class="filter-actions">
+              <div class="dd" id="dd-status">
+                <button type="button" class="dd-btn" id="dd-status-btn"><span id="dd-status-label">全部状态</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+                <div class="dd-menu" id="dd-status-menu" hidden>
+                  <button type="button" class="dd-opt" data-v="all">全部状态</button>
+                  <button type="button" class="dd-opt" data-v="unused">未兑换</button>
+                  <button type="button" class="dd-opt" data-v="redeemed">已兑换</button>
+                  <button type="button" class="dd-opt" data-v="disabled">已禁用</button>
+                </div>
+              </div>
+              <button id="btn-refresh" class="btn btn-secondary">刷新</button>
+            </div>
+            <input id="filter-kw" class="input" type="text" placeholder="搜索激活码…">
+          </div>
+          <div id="key-list" class="key-list"></div>
+          <div id="key-empty" class="empty">暂无激活码，先生成几个试试</div>
+          <div id="pager" class="pager"></div>
+        </div>
+      </section>
+
+      <!-- 监控缓存 -->
+      <section class="card">
+        <div class="section-head"><h3>监控缓存</h3><span class="section-sub" id="shot-stat"></span><span class="section-sub shot-hint">超出后自动删除最旧的，调小会立即清理多余缓存</span></div>
+        <div class="card-body">
+          <div class="shot-limit-row">
+            <div class="field"><label for="shot-limit">保留张数</label><input id="shot-limit" class="input" type="number" min="1" max="5000" step="1"></div>
+            <button id="btn-save-shot-limit" class="btn btn-primary">保存上限</button>
+            <button id="btn-shot-refresh" class="btn btn-secondary">刷新</button>
+            <button id="btn-shot-purge" class="btn btn-danger">一键清空</button>
+          </div>
+          <div id="shot-grid" class="shot-grid"></div>
+          <div id="shot-empty" class="empty" hidden>暂无监控图片</div>
+        </div>
+      </section>
+
+      <!-- 消费流水 -->
+      <section class="card">
+        <div class="section-head"><h3>消费流水</h3><span class="section-sub">最近 500 条</span><button id="btn-refresh-log" class="btn btn-secondary">刷新</button></div>
+        <div class="card-body"><div id="tx-list" class="key-list" style="height:auto;max-height:24rem;"></div><div id="tx-empty" class="empty" hidden>暂无流水</div></div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<!-- 页面缩放控件：固定右下角，自身不随页面缩放 -->
+<div id="page-zoom-ctl" title="调节页面大小（点击百分比还原 100%）">
+  <button type="button" id="pz-dec" class="pz-btn" title="缩小">-</button>
+  <span id="pz-val" class="pz-val">100%</span>
+  <button type="button" id="pz-inc" class="pz-btn" title="放大">+</button>
+</div>
+
+<!-- 自定义弹窗 -->
+<div id="modal" class="modal-mask" hidden>
+  <div class="modal">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions">
+      <button id="modal-cancel" class="btn btn-secondary">取消</button>
+      <button id="modal-ok" class="btn btn-primary">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 监控图全屏查看层（就地在当前页展示，不跳新页） -->
+<div id="shot-fs" class="shot-fs" hidden><img id="shot-fs-img" alt="监控图"><button type="button" class="fs-close" id="shot-fs-close" title="关闭">×</button>
+  <div class="shot-fs-footer">
+    <p class="shot-fs-prompt" id="shot-fs-prompt" hidden></p>
+    <div class="shot-fs-actions">
+      <button type="button" id="fs-copy-prompt">复制提示词</button>
+      <button type="button" id="fs-download">下载图片</button>
+      <button type="button" id="fs-copy-image">复制图片</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const TOKEN_KEY = "wf_admin_token";
+const THEME_KEY = "wf_admin_theme";
+const $ = id => document.getElementById(id);
+
+async function api(path, method = "GET", body = null) {
+  const headers = { "Content-Type": "application/json" };
+  const token = localStorage.getItem(TOKEN_KEY);
+  if (token) headers["X-Admin-Token"] = token;
+  const opt = { method, headers };
+  if (body !== null) opt.body = JSON.stringify(body);
+  try {
+    const res = await fetch(path, opt);
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  } catch (e) {
+    return { ok: false, status: 0, data: null };
+  }
+}
+
+/* ============ 工具函数 ============ */
+const escHtml = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtUsd = v => "$" + Number(v || 0).toFixed(2);
+const fmtTime = ts => { const d = new Date(ts * 1000); const p = n => String(n).padStart(2, "0"); return `${d.getMonth() + 1}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+const fmtBytes = b => { if (!b) return "0 B"; if (b < 1024) return b + " B"; if (b < 1024 * 1024) return (b / 1024).toFixed(1) + " KB"; return (b / 1024 / 1024).toFixed(1) + " MB"; };
+let toastTimer = null;
+function toast(msg, type = "") { const t = $("toast"); t.textContent = msg; t.className = "show " + type; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = ""; }, 4000); }
+function animateNumber(el, target) {
+  const cur = parseFloat(el.textContent.replace(/[^0-9.]/g, "")) || 0;
+  if (cur === target) { el.textContent = target; return; }
+  const dur = 500, start = performance.now();
+  function step(now) { const p = Math.min(1, (now - start) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(cur + (target - cur) * e); if (p < 1) requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+}
+
+/* SVG 图标 */
+const ICONS = {
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  extend: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  ban: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+};
+const icon = name => ICONS[name] || "";
+
+/* ============ 自定义下拉 ============ */
+function initDropdown(btnId, menuId, labelId, onChange) {
+  const btn = $(btnId), menu = $(menuId), label = $(labelId), root = btn.closest(".dd");
+  const pos = () => { const r = btn.getBoundingClientRect(); menu.style.position = "fixed"; menu.style.top = (r.bottom + 4) + "px"; menu.style.left = r.left + "px"; menu.style.minWidth = r.width + "px"; };
+  const close = () => { menu.hidden = true; root.classList.remove("open"); window.removeEventListener("scroll", follow, true); window.removeEventListener("resize", follow); };
+  const follow = () => { if (!menu.hidden) pos(); };
+  window.addEventListener("scroll", follow, true); window.addEventListener("resize", follow);
+  btn.addEventListener("click", e => { e.stopPropagation(); const will = menu.hidden; document.querySelectorAll(".dd.open").forEach(d => { d.classList.remove("open"); const m = d.querySelector(".dd-menu"); if (m) m.hidden = true; }); if (will) { pos(); menu.hidden = false; root.classList.add("open"); } });
+  menu.querySelectorAll(".dd-opt").forEach(o => o.addEventListener("click", () => { label.textContent = o.textContent; menu.querySelectorAll(".dd-opt").forEach(x => x.classList.toggle("selected", x === o)); close(); onChange && onChange(o.dataset.v); }));
+  document.addEventListener("click", close);
+}
+
+/* ============ 自定义弹窗 ============ */
+function openModal({ title, body, okText = "确定", danger = false, onOk = null }) {
+  $("modal-title").textContent = title; $("modal-body").innerHTML = body;
+  const ok = $("modal-ok"); ok.textContent = okText; ok.className = "btn " + (danger ? "btn-danger" : "btn-primary");
+  $("modal").hidden = false; document.body.style.overflow = "hidden";
+  ok.onclick = () => { if (!onOk || onOk() !== false) closeModal(); };
+  $("modal-cancel").onclick = closeModal;
+  $("modal").onclick = e => { if (e.target === $("modal")) closeModal(); };
+}
+function closeModal() { $("modal").hidden = true; document.body.style.overflow = ""; }
+
+/* ============ 主题 ============ */
+function renderThemeBtn(light) { $("btn-theme").innerHTML = icon(light ? "sun" : "moon") + (light ? " 日间" : " 夜间"); }
+function applyTheme(mode) { const light = mode === "light"; document.documentElement.classList.toggle("light", light); renderThemeBtn(light); localStorage.setItem(THEME_KEY, mode); }
+$("btn-theme").addEventListener("click", () => { const cur = document.documentElement.classList.contains("light") ? "light" : "dark"; applyTheme(cur === "light" ? "dark" : "light"); });
+applyTheme(localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark");
+
+/* ============ 登录 / 退出 ============ */
+$("btn-login").addEventListener("click", async () => {
+  const pwd = $("login-pwd").value.trim(); if (!pwd) return;
+  const r = await api("/admin/login", "POST", { password: pwd });
+  if (r.ok && r.data && r.data.token) { localStorage.setItem(TOKEN_KEY, r.data.token); enterApp(); }
+  else { $("login-msg").textContent = (r.data && r.data.error) || "密码错误"; $("login-msg").hidden = false; }
+});
+$("login-pwd").addEventListener("keydown", e => { if (e.key === "Enter") $("btn-login").click(); });
+$("btn-logout").addEventListener("click", () => { localStorage.removeItem(TOKEN_KEY); location.reload(); });
+function enterApp() { $("login-view").hidden = true; $("app-view").hidden = false; loadAll(); }
+
+/* ============ 中转站管理 ============ */
+// 测试进行中提示框：点击测试立即反馈，避免干等
+function showTestModal(name) {
+  $("modal-title").textContent = "测试中转站";
+  $("modal-body").innerHTML = `<div class="test-loading"><span class="spin"></span>正在测试 <b>${escHtml(name)}</b>，请稍候…</div>`;
+  $("modal-ok").hidden = true; $("modal-cancel").hidden = true;
+  $("modal").hidden = false; document.body.style.overflow = "hidden";
+}
+// 测试结果：直接显示在弹框内，用户点"确定"关闭，绝不无声消失
+function showTestResult(ok, msg, models) {
+  $("modal-title").textContent = ok ? "测试成功" : "测试失败";
+  const listHtml = (models && models.length)
+    ? `<div class="test-models">支持模型（${models.length}）：<div class="model-chips">${models.map(m => `<span class="model-chip">${escHtml(m)}</span>`).join("")}</div></div>`
+    : "";
+  $("modal-body").innerHTML = `<div class="test-result ${ok ? "ok" : "err"}">${escHtml(msg)}</div>${listHtml}`;
+  $("modal-cancel").hidden = true;
+  const okBtn = $("modal-ok"); okBtn.hidden = false; okBtn.textContent = "确定"; okBtn.onclick = closeModal;
+}
+function provItemHtml(p, index) {
+  const name = "中转站" + (index + 1);
+  const keyMask = p.key_masked ? p.key_masked : "未配置";
+  return `
+  <div class="prov-item ${p.active ? "active" : ""}" data-id="${escHtml(p.id)}">
+    <div class="prov-radio" data-act="activate" title="${p.active ? "当前启用" : "点击切换启用"}"></div>
+    <div class="prov-main">
+      <div class="prov-title"><b>${escHtml(name)}</b>${p.active ? `<span class="prov-badge">● 启用中</span>` : ""}${p.note ? `<span class="prov-note-inline" data-note="${escHtml(p.note)}">${escHtml(p.note)}</span>` : ""}</div>
+      <div class="prov-meta">
+        <span class="prov-url" title="${escHtml(p.url)}">${escHtml(p.url)}</span>
+        <span class="prov-kv">Key：${escHtml(keyMask)}</span>
+        <span class="prov-kv">模型：${p.model ? escHtml(p.model) : "全局默认"}</span>
+        <span class="prov-kv">已调用 ${Number(p.calls || 0)} 次</span>
+      </div>
+    </div>
+    <div class="prov-actions">
+      <button type="button" class="btn btn-mini btn-secondary" data-act="note">备注</button>
+      <button type="button" class="btn btn-mini btn-secondary" data-act="test">测试</button>
+      <button type="button" class="btn btn-mini btn-secondary" data-act="edit">编辑</button>
+      <button type="button" class="btn btn-mini btn-danger" data-act="del">删除</button>
+    </div>
+  </div>`;
+}
+async function loadProviders() {
+  const r = await api("/admin/providers"); if (!r.ok) return;
+  const list = r.data.list || [];
+  $("prov-list").innerHTML = list.length
+    ? list.map(provItemHtml).join("")
+    : `<div class="prov-empty">还没有中转站，请在上方添加。</div>`;
+  const active = list.find(p => p.active);
+  $("prov-count").textContent = list.length
+    ? `${list.length} 个 · 当前启用：${active ? "中转站" + (list.indexOf(active) + 1) : "无"}`
+    : "可配置多个，勾选启用";
+}
+$("btn-add-prov").addEventListener("click", async () => {
+  const url = $("pv-url").value.trim(), key = $("pv-key").value.trim(), model = $("pv-model").value.trim();
+  if (!url || !key) { toast("中转站地址和 Key 必填", "err"); return; }
+  const r = await api("/admin/providers", "POST", { url, key, model });
+  if (r.ok) { toast("已添加中转站", "ok"); ["pv-url", "pv-key", "pv-model"].forEach(id => $(id).value = ""); loadProviders(); }
+  else toast((r.data && r.data.error) || "添加失败", "err");
+});
+
+/* ============ 生图模型 ============ */
+let GLOBAL_MODEL = "";
+async function loadModel() {
+  const r = await api("/admin/model");
+  if (!r.ok || !r.data) return;
+  GLOBAL_MODEL = r.data.model || r.data.default || "";
+  $("md-model").value = GLOBAL_MODEL;
+  // 各处的「留空 = 全局默认」提示直接带上当前模型 ID，省得用户猜
+  const hint = modelHint();
+  const pvModel = $("pv-model"); if (pvModel) pvModel.placeholder = hint;
+  const epModel = $("ep-model"); if (epModel) epModel.placeholder = hint;
+}
+function modelHint() {
+  return GLOBAL_MODEL ? `留空 = 使用全局默认（${GLOBAL_MODEL}）` : "留空 = 使用全局默认模型";
+}
+$("btn-save-model").addEventListener("click", async () => {
+  const model = $("md-model").value.trim();
+  if (!model) { toast("模型 ID 不能为空", "err"); return; }
+  const r = await api("/admin/model", "PUT", { model });
+  if (r.ok) { toast("已保存", "ok"); loadModel(); loadProviders(); }
+  else toast((r.data && r.data.error) || "保存失败", "err");
+});
+$("btn-test-model").addEventListener("click", async () => {
+  const model = $("md-model").value.trim();
+  if (!model) { toast("请先填写模型 ID", "err"); return; }
+  const box = $("md-result");
+  box.hidden = false; box.className = "model-test-result";
+  box.innerHTML = `<div class="mt-msg">正在检测…</div>`;
+  clearTimeout(mdResultTimer);   // 重新测试时取消上一次的自动隐藏
+  const r = await api("/admin/model/test", "POST", { model });
+  const d = r.data || {};
+  if (!r.ok || !d.ok) {
+    box.className = "model-test-result err";
+    box.innerHTML = `<div class="mt-msg">${escHtml(d.message || "检测失败")}</div>`;
+    scheduleHideMdResult();
+    return;
+  }
+  if (d.exists === true) {
+    box.className = "model-test-result ok";
+    box.innerHTML = `<div class="mt-msg">✓ ${escHtml(d.message)}</div>` + renderModelChips(d.models, d.model);
+  } else if (d.exists === false) {
+    box.className = "model-test-result err";
+    box.innerHTML = `<div class="mt-msg">✗ ${escHtml(d.message)}</div>` + renderModelChips(d.models, d.model);
+  } else {
+    box.className = "model-test-result warn";
+    box.innerHTML = `<div class="mt-msg">⚠ ${escHtml(d.message)}</div>`;
+  }
+  scheduleHideMdResult();
+});
+/* 测试结果展示几秒后自动收起，避免一直占着版面 */
+let mdResultTimer = null;
+function scheduleHideMdResult() {
+  clearTimeout(mdResultTimer);
+  mdResultTimer = setTimeout(() => {
+    const box = $("md-result");
+    if (box) { box.hidden = true; box.innerHTML = ""; box.className = "model-test-result"; }
+  }, 3500);
+}
+function renderModelChips(models, hit) {
+  if (!models || !models.length) return "";
+  return `<div style="margin-top:var(--space-xs);color:var(--c-muted)">中转站支持的模型（${models.length}）：</div>`
+    + `<div class="model-chips">${models.map(m => `<span class="model-chip${m === hit ? " hit" : ""}">${escHtml(m)}</span>`).join("")}</div>`;
+}
+
+/* ============ 价格设置 ============ */
+async function loadPrices() {
+  const r = await api("/admin/prices");
+  if (r.ok && r.data) {
+    if (r.data["1K"] != null) $("price-1k").value = r.data["1K"];
+    if (r.data["2K"] != null) $("price-2k").value = r.data["2K"];
+    if (r.data["4K"] != null) $("price-4k").value = r.data["4K"];
+  }
+}
+$("btn-save-price").addEventListener("click", async () => {
+  const val = k => parseFloat($("price-" + k).value);
+  const body = { "1K": val("1k"), "2K": val("2k"), "4K": val("4k") };
+  if (["1K", "2K", "4K"].some(t => isNaN(body[t]) || body[t] < 0)) { toast("价格无效，请输入不小于 0 的数字", "err"); return; }
+  const r = await api("/admin/prices", "PUT", body);
+  if (r.ok) toast("价格已保存", "ok"); else toast((r.data && r.data.error) || "保存失败", "err");
+});
+
+/* ============ 公告设置 ============ */
+async function loadAnnouncement() {
+  const r = await api("/admin/announcement");
+  if (r.ok && r.data) $("notice-text").value = r.data.text || "";
+}
+$("btn-save-notice").addEventListener("click", async () => {
+  const r = await api("/admin/announcement", "PUT", { text: $("notice-text").value });
+  if (r.ok) toast("公告已保存", "ok"); else toast((r.data && r.data.error) || "保存失败", "err");
+});
+/* ============ 购买链接设置 ============ */
+async function loadPurchase() {
+  const r = await api("/admin/purchase");
+  if (r.ok && r.data) $("purchase-url").value = r.data.url || "";
+}
+$("btn-save-purchase").addEventListener("click", async () => {
+  const r = await api("/admin/purchase", "PUT", { url: $("purchase-url").value.trim() });
+  if (r.ok) toast("购买链接已保存", "ok"); else toast((r.data && r.data.error) || "保存失败", "err");
+});
+$("prov-list").addEventListener("click", async e => {
+  const actEl = e.target.closest("[data-act]"); if (!actEl) return;
+  const item = actEl.closest(".prov-item"); if (!item) return;
+  const id = item.dataset.id, act = actEl.dataset.act;
+  if (act === "activate") {
+    const r = await api(`/admin/providers/${id}/activate`, "POST");
+    if (r.ok) { toast("已启用中转站", "ok"); loadProviders(); } else toast((r.data && r.data.error) || "切换失败", "err");
+  } else if (act === "note") {
+    const noteEl = actEl.closest(".prov-item").querySelector(".prov-note-inline");
+    const curNote = noteEl ? noteEl.dataset.note : "";
+    openModal({ title: "设置备注", body: `<div class="field"><label>备注</label><input id="nt-input" class="input" value="${escHtml(curNote)}" placeholder="该中转站用途/说明"></div>`, okText: "保存", onOk: async () => {
+      const r = await api(`/admin/providers/${id}/note`, "POST", { note: $("nt-input").value });
+      if (r.ok) { toast("备注已保存", "ok"); loadProviders(); } else { toast((r.data && r.data.error) || "保存失败", "err"); return false; }
+    } });
+  } else if (act === "test") {
+    const nameEl = actEl.closest(".prov-item").querySelector(".prov-title b");
+    const pname = nameEl ? nameEl.textContent : "中转站";
+    showTestModal(pname);
+    const r = await api(`/admin/providers/${id}/test`, "POST");
+    const ok = !!(r.ok && r.data && r.data.ok);
+    const msg = (r.data && (r.data.message || r.data.error)) || (ok ? "连接正常" : "测试失败");
+    showTestResult(ok, msg, (r.data && r.data.models) || []);
+  } else if (act === "edit") {
+    openEditProvider(id);
+  } else if (act === "del") {
+    openModal({ title: "删除中转站", body: "确定删除该中转站？若它是当前启用项，将自动切换到剩余第一个。", okText: "删除", danger: true, onOk: async () => {
+      const rr = await api(`/admin/providers/${id}`, "DELETE");
+      if (rr.ok) { toast("已删除", "ok"); loadProviders(); } else toast((rr.data && rr.data.error) || "删除失败", "err");
+    } });
+  }
+});
+async function openEditProvider(id) {
+  const r = await api("/admin/providers");
+  const p = (r.data.list || []).find(x => x.id === id); if (!p) return;
+  openModal({
+    title: "编辑中转站",
+    body: `
+      <div class="field" style="margin-bottom:var(--space-sm)"><label>中转站地址 (URL)</label><input id="ep-url" class="input" value="${escHtml(p.url)}" placeholder="https://xxx（自动补全接口路径）"></div>
+      <div class="field" style="margin-bottom:var(--space-sm)"><label>API Key（留空表示不变）</label>
+        <div class="input-with-btn">
+          <input id="ep-key" class="input" type="password" placeholder="${escHtml(p.key_masked || "未配置")}">
+          <button type="button" id="ep-copy-key" class="btn btn-secondary" title="复制当前 Key 到剪贴板" ${p.has_key ? "" : "disabled"}>复制 Key</button>
+        </div>
+      </div>
+      <div class="field"><label>模型 ID（留空则用全局默认）</label><input id="ep-model" class="input" value="${escHtml(p.model || "")}" placeholder="${escHtml(modelHint())}"></div>`,
+    okText: "保存",
+    onOk: async () => {
+      const body = { url: $("ep-url").value, model: $("ep-model").value.trim() };
+      if ($("ep-key").value.trim()) body.key = $("ep-key").value.trim();
+      const rr = await api(`/admin/providers/${id}`, "PUT", body);
+      if (rr.ok) { toast("已保存", "ok"); loadProviders(); } else { toast((rr.data && rr.data.error) || "保存失败", "err"); return false; }
+    }
+  });
+  // 复制现有 Key（明文不落到输入框里，点一下直接进剪贴板）
+  $("ep-copy-key")?.addEventListener("click", async () => {
+    const rr = await api(`/admin/providers/${id}/key`);
+    if (!rr.ok || !rr.data || !rr.data.key) { toast((rr.data && rr.data.error) || "读取 Key 失败", "err"); return; }
+    toast(await copyText(rr.data.key) ? "API Key 已复制" : "复制失败", "ok");
+  });
+}
+
+/* ============ 统计 ============ */
+async function loadStats() {
+  const r = await api("/api/admin/stats"); if (!r.ok) return;
+  animateNumber($("s-codes"), r.data.codes_total);
+  animateNumber($("s-unused"), r.data.codes_unused);
+  animateNumber($("s-usage"), r.data.total_usage);
+  animateNumber($("s-accounts"), r.data.accounts);
+  $("s-balance").textContent = fmtUsd(r.data.total_balance);
+  $("s-spent").textContent = fmtUsd(r.data.total_spent);
+}
+
+/* ============ 生成激活码 ============ */
+$("opt-row").querySelectorAll(".opt-chip").forEach(chip => chip.addEventListener("click", () => {
+  $("opt-row").querySelectorAll(".opt-chip").forEach(c => c.classList.remove("active"));
+  chip.classList.add("active"); $("gen-amount").value = chip.dataset.amt;
+}));
+$("btn-gen").addEventListener("click", async () => {
+  const count = Math.max(1, Math.min(200, parseInt($("gen-count").value, 10) || 1));
+  const amount = parseFloat($("gen-amount").value) || 0;
+  if (amount <= 0) { toast("额度必须大于 0", "err"); return; }
+  const r = await api("/api/admin/codes", "POST", { count, amount });
+  if (!r.ok) { toast((r.data && r.data.error) || "生成失败", "err"); return; }
+  $("gen-result").hidden = false;
+  $("gen-result").innerHTML = r.data.codes.map(code => `<div class="gen-result-item"><span style="flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(code)}</span><button class="op-icon" title="复制" data-copy="${escHtml(code)}">${icon("copy")}</button></div>`).join("");
+  $("gen-result").querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => toast(await copyText(b.dataset.copy) ? "激活码已复制" : "复制失败", "ok")));
+  toast(`已生成 ${r.data.codes.length} 个激活码`, "ok"); loadCodes(); loadStats();
+});
+
+/* ============ 激活码列表 ============ */
+let CODES = [];
+let filterStatus = "all", filterKeyword = "", page = 1;
+const PAGE_SIZE = 10;
+function codeStatus(c) { if (!c.enabled) return "disabled"; return c.redeemed_at ? "redeemed" : "unused"; }
+function badgeFor(st) { if (st === "redeemed") return '<span class="badge badge-ok">已兑换</span>'; if (st === "disabled") return '<span class="badge badge-exp">已禁用</span>'; return '<span class="badge badge-warn">未兑换</span>'; }
+function filteredCodes() {
+  const kw = filterKeyword.trim().toUpperCase();
+  return CODES.filter(c => {
+    if (filterStatus !== "all" && codeStatus(c) !== filterStatus) return false;
+    if (kw && !c.code.toUpperCase().includes(kw)) return false;
+    return true;
+  }).sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
+}
+function renderPager(total) {
+  const pager = $("pager"); const pages = Math.max(1, Math.ceil(total / PAGE_SIZE)); pager.innerHTML = "";
+  const mk = (label, fn, dis) => { const b = document.createElement("button"); b.className = "btn btn-mini btn-secondary"; b.textContent = label; b.disabled = !!dis; if (!dis) b.addEventListener("click", fn); pager.appendChild(b); };
+  const goto = p => { page = Math.min(Math.max(1, p), pages); renderCodes(); };
+  if (pages > 1) {
+    mk("«", () => goto(1), page <= 1); mk("上一页", () => goto(page - 1), page <= 1);
+    const jump = document.createElement("span"); jump.className = "pager-jump";
+    const input = document.createElement("input"); input.type = "number"; input.min = 1; input.max = pages; input.value = page; input.className = "input pager-input";
+    input.addEventListener("keydown", e => { if (e.key === "Enter") { const v = parseInt(input.value, 10); if (v >= 1 && v <= pages) goto(v); } });
+    input.addEventListener("blur", () => { input.value = page; }); jump.appendChild(input); jump.appendChild(document.createTextNode(` / ${pages}`));
+    pager.appendChild(jump); mk("下一页", () => goto(page + 1), page >= pages); mk("»", () => goto(pages), page >= pages);
+  }
+}
+function renderCodes() {
+  const list = $("key-list"), empty = $("key-empty");
+  const view = filteredCodes(); const total = view.length; const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  if (page > pages) page = pages; const slice = view.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  empty.hidden = CODES.length > 0;
+  $("list-count").textContent = CODES.length ? `共 ${CODES.length} 个${filterKeyword || filterStatus !== "all" ? ` · 命中 ${total}` : ""}` : "";
+  renderPager(total);
+  list.innerHTML = "";
+  for (const c of slice) {
+    const st = codeStatus(c); const amount = fmtUsd((c.amount_micro || 0) / 1000000);
+    const user = c.redeemed_by ? ` · ${escHtml(String(c.redeemed_by).slice(0, 8))}` : "";
+    const row = document.createElement("div"); row.className = "key-row";
+    row.innerHTML = `
+      <div class="key-row-top">
+        <span class="key-code" title="${escHtml(c.code)}">${escHtml(c.code)}</span>
+        <div class="key-row-actions"><div class="key-ops">
+          <button class="op-icon" title="复制" data-act="copy">${icon("copy")}</button>
+          <button class="op-icon" title="${c.enabled ? "禁用" : "启用"}" data-act="toggle">${icon(c.enabled ? "ban" : "check")}</button>
+          <button class="op-icon" title="追加额度" data-act="extend">${icon("extend")}</button>
+          <button class="op-icon danger" title="删除" data-act="del">${icon("trash")}</button>
+        </div></div>
+      </div>
+      <div class="key-meta"><span>额度 <b style="color:var(--c-body-strong)">${amount}</b></span>${c.redeemed_at ? `<span>兑换 ${fmtTime(c.redeemed_at)}${user}</span>` : ""}${badgeFor(st)}</div>`;
+    row.querySelector('[data-act="copy"]').addEventListener("click", async () => toast(await copyText(c.code) ? "激活码已复制" : "复制失败", "ok"));
+    row.querySelector('[data-act="toggle"]').addEventListener("click", async () => { const r = await api("/api/admin/codes/" + encodeURIComponent(c.code) + "/toggle", "POST", { enabled: !c.enabled }); toast(r.ok ? (c.enabled ? "已禁用" : "已启用") : ((r.data && r.data.error) || "操作失败"), r.ok ? "ok" : "err"); loadCodes(); loadStats(); });
+    row.querySelector('[data-act="extend"]').addEventListener("click", () => openModal({ title: "追加额度", body: `<p style="margin:0 0 var(--space-sm)">为 <code>${escHtml(c.code)}</code> 追加额度：</p><input id="extend-input" class="input" type="number" min="0.01" step="0.01" value="1" placeholder="如 1.00">`, okText: "追加", onOk: () => { const v = parseFloat($("extend-input").value); if (!v || v <= 0) { toast("额度无效", "err"); return false; } doExtend(c.code, v); } }));
+    row.querySelector('[data-act="del"]').addEventListener("click", () => openModal({ title: "删除激活码", body: `确认删除 <code>${escHtml(c.code)}</code> ？删除后不可恢复。`, okText: "删除", danger: true, onOk: async () => { const r = await api("/api/admin/codes/" + encodeURIComponent(c.code), "DELETE"); toast(r.ok ? "已删除" : ((r.data && r.data.error) || "删除失败"), r.ok ? "ok" : "err"); loadCodes(); loadStats(); } }));
+    list.appendChild(row);
+  }
+}
+async function doExtend(code, amount) { const r = await api("/api/admin/codes/" + encodeURIComponent(code) + "/extend", "POST", { amount }); if (r.ok) { toast("已追加", "ok"); loadCodes(); loadStats(); } else toast((r.data && r.data.error) || "追加失败", "err"); }
+async function loadCodes() { const r = await api("/api/admin/codes"); if (!r.ok) return; CODES = r.data.codes || []; renderCodes(); }
+initDropdown("dd-status-btn", "dd-status-menu", "dd-status-label", v => { filterStatus = v; page = 1; renderCodes(); });
+$("filter-kw").addEventListener("input", () => { filterKeyword = $("filter-kw").value; page = 1; renderCodes(); });
+$("btn-refresh").addEventListener("click", () => { toast("已刷新", "ok"); loadCodes(); });
+
+/* ============ 消费流水 ============ */
+async function loadTx() {
+  const r = await api("/api/admin/transactions"); if (!r.ok) return;
+  const tx = r.data.transactions || []; $("tx-empty").hidden = tx.length > 0;
+  $("tx-list").innerHTML = tx.map(t => `<div class="key-row"><div class="key-row-top"><span class="key-code">${escHtml(t.tier || "-")} × ${t.count} · ${escHtml(t.user_id.slice(0, 10))}</span><span class="key-row-actions">${t.status === "success" ? '<span class="badge badge-ok">成功</span>' : t.status === "failed" ? '<span class="badge badge-exp">失败</span>' : '<span class="badge badge-warn">充值</span>'}</span></div><div class="key-meta"><span>${fmtTime(t.created)}</span><span>${fmtUsd((t.cost_micro || 0) / 1000000)}</span></div>${t.provider ? `<div class="tx-provider">中转站：${escHtml(t.provider)}</div>` : ""}${t.error ? `<div class="tx-log${t.status === "failed" ? " tx-log-err" : ""}">${escHtml(t.error)}</div>` : ""}</div>`).join("");
+}
+$("btn-refresh-log").addEventListener("click", () => { toast("已刷新", "ok"); loadTx(); });
+
+/* ============ 监控缓存 ============ */
+let SHOT_LIST = [];   // 当前列表，供按钮/全屏取 prompt 和原图地址
+function shotUrls(id) {
+  const tk = localStorage.getItem(TOKEN_KEY) || "";
+  const q = "?token=" + encodeURIComponent(tk);
+  return {
+    thumb: `/api/admin/generated/${encodeURIComponent(id)}/thumb${q}`,
+    full: `/api/admin/generated/${encodeURIComponent(id)}${q}`
+  };
+}
+async function loadShots() {
+  const r = await api("/api/admin/generated"); if (!r.ok) return;
+  const list = r.data.list || []; SHOT_LIST = list;
+  $("shot-empty").hidden = list.length > 0;
+  $("shot-stat").textContent = `只缓存最近 ${r.data.total} / ${r.data.limit} 张 · ${fmtBytes(r.data.bytes)}`;
+  $("shot-grid").innerHTML = list.map(it => {
+    const u = shotUrls(it.id);
+    const hasPrompt = !!(it.prompt && String(it.prompt).trim());
+    return `<div class="shot-card" data-id="${escHtml(it.id)}">
+      <img src="${u.thumb}" alt="生成图" loading="lazy" data-full="${u.full}">
+      <div class="shot-time"><span>${fmtTime(it.created)}</span><span class="shot-size">${fmtBytes(it.bytes)}</span><button class="shot-del" title="删除" data-del="${escHtml(it.id)}">✕</button></div>
+      <div class="shot-actions">
+        <button type="button" data-copy-prompt="${escHtml(it.id)}" ${hasPrompt ? "" : "disabled title=\"该图无提示词记录\""}>复制提示词</button>
+        <button type="button" data-download="${escHtml(it.id)}">下载</button>
+        <button type="button" data-copy-img="${escHtml(it.id)}">复制图片</button>
+      </div>
+    </div>`;
+  }).join("");
+
+  // 删除
+  $("shot-grid").querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", e => {
+    e.stopPropagation();
+    openModal({ title: "删除监控图", body: "确认删除这张监控图？", okText: "删除", danger: true, onOk: async () => {
+      const rr = await api("/api/admin/generated/" + encodeURIComponent(b.dataset.del), "DELETE");
+      toast(rr.ok ? "已删除" : ((rr.data && rr.data.error) || "删除失败"), rr.ok ? "ok" : "err");
+      loadShots();
+    } });
+  }));
+  // 点小图 → 全屏（加载原图）
+  $("shot-grid").querySelectorAll("img").forEach(img => img.addEventListener("click", () => openShotFs(img.dataset.full, findShot(img.closest(".shot-card")?.dataset.id))));
+  // 复制提示词
+  $("shot-grid").querySelectorAll("[data-copy-prompt]").forEach(b => b.addEventListener("click", e => {
+    e.stopPropagation();
+    const it = findShot(b.dataset.copyPrompt);
+    const text = (it && it.prompt) || "";
+    if (!text.trim()) { toast("该图无提示词记录", "err"); return; }
+    copyText(text).then(ok => toast(ok ? "提示词已复制" : "复制失败", ok ? "ok" : "err"));
+  }));
+  // 下载
+  $("shot-grid").querySelectorAll("[data-download]").forEach(b => b.addEventListener("click", e => {
+    e.stopPropagation();
+    const it = findShot(b.dataset.download); if (!it) return;
+    const a = document.createElement("a");
+    a.href = shotUrls(it.id).full; a.download = `UCanTech-${it.id}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+    toast("已开始下载", "ok");
+  }));
+  // 复制图片
+  $("shot-grid").querySelectorAll("[data-copy-img]").forEach(b => b.addEventListener("click", async e => {
+    e.stopPropagation();
+    const it = findShot(b.dataset.copyImg); if (!it) return;
+    toast(await copyImage(shotUrls(it.id).full) ? "图片已复制" : "复制失败", "ok");
+  }));
+}
+function findShot(id) { return SHOT_LIST.find(x => x.id === id) || null; }
+/* 复制文本：优先 Clipboard API，失败回退 execCommand */
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      const ok = document.execCommand("copy"); ta.remove(); return ok;
+    } catch { return false; }
+  }
+}
+/* 复制图片到剪贴板 */
+async function copyImage(url) {
+  try {
+    const blob = await (await fetch(url)).blob();
+    await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+    return true;
+  } catch { return false; }
+}
+$("btn-shot-refresh").addEventListener("click", () => { toast("已刷新", "ok"); loadShots(); });
+/* 缓存上限：读取 / 保存 */
+async function loadCacheLimit() {
+  const r = await api("/admin/cache-limit");
+  if (r.ok && r.data) $("shot-limit").value = r.data.limit;
+}
+$("btn-save-shot-limit").addEventListener("click", async () => {
+  const limit = parseInt($("shot-limit").value, 10);
+  if (!Number.isFinite(limit) || limit < 1) { toast("请输入不小于 1 的整数", "err"); return; }
+  const r = await api("/admin/cache-limit", "PUT", { limit });
+  if (!r.ok) { toast((r.data && r.data.error) || "保存失败", "err"); return; }
+  const removed = r.data.removed || 0;
+  toast(removed ? `上限已保存，顺带清理 ${removed} 张旧图` : "上限已保存", "ok");
+  loadShots();
+});
+/* 一键清空：确认后真删文件 */
+$("btn-shot-purge").addEventListener("click", () => {
+  openModal({
+    title: "一键清空监控缓存",
+    body: "将删除全部监控缓存图片并释放磁盘空间，此操作不可撤销。确定继续？",
+    okText: "清空", danger: true,
+    onOk: async () => {
+      const r = await api("/api/admin/generated/purge", "POST");
+      if (!r.ok) { toast((r.data && r.data.error) || "清空失败", "err"); return false; }
+      toast(`已清空 ${r.data.removed} 张，释放 ${fmtBytes(r.data.freed_bytes)}`, "ok");
+      loadShots();
+    }
+  });
+});
+
+async function loadAll() { await Promise.all([loadProviders(), loadStats(), loadCodes(), loadTx(), loadShots(), loadPrices(), loadAnnouncement(), loadPurchase(), loadModel(), loadCacheLimit()]); }
+
+/* ============ 页面缩放控件（右下角，自身不缩放） ============ */
+const PAGE_ZOOM_KEY = "wf_admin_pagezoom";
+function applyPageZoom(v) {
+  const z = Math.min(1.5, Math.max(0.75, Math.round(v * 100) / 100) || 1);
+  ["app-view", "login-view"].forEach(id => { const el = document.getElementById(id); if (el) el.style.zoom = String(z); });
+  const label = $("pz-val"); if (label) label.textContent = Math.round(z * 100) + "%";
+  localStorage.setItem(PAGE_ZOOM_KEY, String(z));
+  return z;
+}
+function getPageZoom() { const v = parseFloat(localStorage.getItem(PAGE_ZOOM_KEY) || "1"); return isNaN(v) ? 1 : v; }
+$("pz-dec").addEventListener("click", () => applyPageZoom(getPageZoom() - 0.05));
+$("pz-inc").addEventListener("click", () => applyPageZoom(getPageZoom() + 0.05));
+$("pz-val").addEventListener("click", () => applyPageZoom(1));
+applyPageZoom(getPageZoom());
+
+/* 启动：已有 token 直接进 */
+/* 监控图全屏查看：就地展示，不跳新页（可滚轮缩放、拖动、关闭按钮、点外部关闭、ESC） */
+function applyFsTransform(img){
+  const s = parseFloat(img.dataset.scale || "1");
+  const tx = parseFloat(img.dataset.tx || "0");
+  const ty = parseFloat(img.dataset.ty || "0");
+  img.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+}
+let FS_ITEM = null;   // 全屏查看的当前监控图记录
+function openShotFs(src, item){
+  const img = $("shot-fs-img");
+  img.dataset.scale = "1"; img.dataset.tx = "0"; img.dataset.ty = "0";
+  img.style.transform = "";
+  img.src = src;
+  FS_ITEM = item || null;
+  const hasPrompt = !!(FS_ITEM && FS_ITEM.prompt && String(FS_ITEM.prompt).trim());
+  // 提示词：有才显示，过长由 CSS 单行省略
+  const promptEl = $("shot-fs-prompt");
+  if (promptEl) {
+    promptEl.textContent = hasPrompt ? String(FS_ITEM.prompt).trim() : "";
+    promptEl.hidden = !hasPrompt;
+  }
+  $("fs-copy-prompt").disabled = !hasPrompt;
+  $("fs-copy-prompt").title = hasPrompt ? "" : "该图无提示词记录";
+  $("shot-fs").hidden = false;
+  document.body.style.overflow = "hidden";  // 锁背景滚动
+}
+function closeShotFs(){
+  $("shot-fs").hidden = true; $("shot-fs-img").src = "";
+  const m = document.getElementById("modal");
+  if (!m || m.hidden) document.body.style.overflow = "";  // 解锁背景滚动
+}
+/* 滚轮放大缩小（0.5x ~ 8x） */
+$("shot-fs-img").addEventListener("wheel", e => {
+  e.preventDefault();
+  const img = $("shot-fs-img");
+  let s = parseFloat(img.dataset.scale || "1");
+  s = e.deltaY < 0 ? Math.min(8, s * 1.12) : Math.max(0.5, s / 1.12);
+  img.dataset.scale = s;
+  applyFsTransform(img);
+}, { passive: false });
+/* 拖动查看 */
+let fsDrag = null;
+$("shot-fs-img").addEventListener("mousedown", e => {
+  e.preventDefault();
+  const img = $("shot-fs-img");
+  fsDrag = { x: e.clientX, y: e.clientY, tx: parseFloat(img.dataset.tx || "0"), ty: parseFloat(img.dataset.ty || "0") };
+  img.style.cursor = "grabbing";
+});
+document.addEventListener("mousemove", e => {
+  if (!fsDrag) return;
+  const img = $("shot-fs-img");
+  img.dataset.tx = fsDrag.tx + (e.clientX - fsDrag.x);
+  img.dataset.ty = fsDrag.ty + (e.clientY - fsDrag.y);
+  applyFsTransform(img);
+});
+document.addEventListener("mouseup", () => {
+  if (fsDrag) { fsDrag = null; $("shot-fs-img").style.cursor = "grab"; }
+});
+/* 关闭：按钮 / 点遮罩 / ESC */
+$("shot-fs-close").addEventListener("click", closeShotFs);
+$("shot-fs").addEventListener("click", e => { if (e.target === $("shot-fs")) closeShotFs(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("shot-fs").hidden) closeShotFs(); });
+/* 全屏操作条：复制提示词 / 下载 / 复制图片 */
+$("fs-copy-prompt").addEventListener("click", async () => {
+  const text = (FS_ITEM && FS_ITEM.prompt) || "";
+  if (!text.trim()) { toast("该图无提示词记录", "err"); return; }
+  toast(await copyText(text) ? "提示词已复制" : "复制失败", "ok");
+});
+$("fs-download").addEventListener("click", () => {
+  if (!FS_ITEM) return;
+  const a = document.createElement("a");
+  a.href = shotUrls(FS_ITEM.id).full; a.download = `UCanTech-${FS_ITEM.id}.png`;
+  document.body.appendChild(a); a.click(); a.remove();
+  toast("已开始下载", "ok");
+});
+$("fs-copy-image").addEventListener("click", async () => {
+  if (!FS_ITEM) return;
+  toast(await copyImage(shotUrls(FS_ITEM.id).full) ? "图片已复制" : "复制失败", "ok");
+});
+if (localStorage.getItem(TOKEN_KEY)) { $("login-view").hidden = true; $("app-view").hidden = false; loadAll(); }
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>幻象工坊 · AI 生图</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}?v=20260910i">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/">
+        <span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><g transform="rotate(335 12 12) translate(12 12) scale(0.82) translate(-12 -12)"><path fill="currentColor" d="m18.723 19.748-1.73 1.493H.678L0 18.77l10.63-9.343.542 6.635h8.701a3.649 3.649 0 0 1-1.15 3.686zM5.277 4.252l1.73-1.493h16.316L24 5.23l-10.63 9.343-.542-6.635H4.129a3.648 3.648 0 0 1 1.148-3.686Z"/></g></svg></span>
+        <span><b>幻象工坊</b><small>UCanTech</small></span>
+      </a>
+      <div class="topbar-actions"><span class="queue-dot"></span><span id="queueStatus">队列空闲</span><span class="balance-chip" id="balanceChip" hidden>余额 <b id="balanceVal">$0.00</b></span><button class="topbar-btn" id="redeemButton" aria-label="兑换额度">⇄ 兑换额度</button><div class="board-switch" id="boardSwitch"><button class="topbar-btn" id="boardTrigger" aria-haspopup="true" aria-expanded="false" aria-label="切换画布">▦ <b id="boardName">画布一</b> <span class="board-caret" aria-hidden="true">⌄</span></button><div class="board-menu" id="boardMenu" hidden></div></div><button class="topbar-btn" id="addBoard" aria-label="添加画布">＋ 添加画布</button><button class="topbar-btn" id="historyToggle" aria-label="打开本地历史">◷ 历史</button></div>
+    </header>
+    <main class="workspace">
+      <section class="stage-panel">
+        <div class="stage-heading"><span class="eyebrow">LIVE CANVAS</span><span class="batch-label">BATCH <strong id="batchCount">0</strong></span><h1><span class="swap-words"><span class="sw sw-a">利用先进</span><span class="sw sw-b">自主思考</span><span class="sw sw-c">灵感迸发</span></span>的图生模型<span class="brand-glow">ChatGPT Images 2.5</span> 把想象，变成画面</h1></div>
+        <div class="canvas-viewport" id="canvasViewport"><div class="canvas-world" id="canvasWorld"></div><div class="canvas-loading" id="canvasLoading"><img class="loading-logo" src="{{ url_for('static', filename='loading.png') }}" alt="" onerror="this.remove()"><span class="canvas-spinner"></span><span class="loading-message">正在恢复画布…</span></div></div>
+      </section>
+
+      <aside class="history-drawer" id="historyDrawer" aria-label="本地历史">
+        <div class="history-card">
+          <div class="history-list-view" id="historyListView">
+            <div class="drawer-heading"><div><span class="eyebrow">LOCAL ARCHIVE</span><h2>本地历史</h2></div><button class="icon-button" id="closeHistory" aria-label="关闭本地历史">×</button></div>
+            <p class="drawer-note">仅保存在此浏览器 · 不上传历史记录</p>
+            <input class="history-search" id="historySearch" type="search" placeholder="搜索提示词或模型" aria-label="搜索提示词或模型">
+            <div class="history-tabs"><button class="selected" data-history-filter="all">全部</button><button data-history-filter="favorite">收藏栏</button></div>
+            <div class="history-list" id="historyList"><p class="history-empty">还没有本地生成记录</p></div>
+
+            <button class="danger-button" id="clearHistory">清空本地历史 <span id="storageLabel">历史缓存：0 B</span></button>
+          </div>
+          <div class="history-viewer" id="historyViewer" hidden>
+            <div class="viewer-head"><span class="eyebrow">IMAGE PREVIEW</span><button class="icon-button" id="closeViewer" aria-label="关闭预览">×</button></div>
+            <div class="viewer-stage" id="viewerStage"><img id="viewerImage" alt="预览图片"></div>
+            <div class="viewer-caption"><p id="viewerPrompt"></p><small id="viewerMeta"></small></div>
+            <div class="viewer-actions">
+              <button type="button" class="viewer-action" id="viewerCopyPrompt">复制提示</button>
+              <button type="button" class="viewer-action" id="viewerCopyImage">复制图片</button>
+              <button type="button" class="viewer-action" id="viewerDownload">下载图片</button>
+              <button type="button" class="viewer-action danger" id="viewerDelete">删除记录</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="prompt-dock" id="promptDock" aria-label="提示词编辑器" hidden>
+        <div class="prompt-input-wrap"><div id="prompt" class="prompt-editor" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="可直接文字生图，或上传图片输入文字指令对图片进行编辑，如：将背景改为雪夜"></div><span class="prompt-count" id="promptCount">0 / 4000</span></div>
+        <div class="dock-preview-list" id="dockPreviewList" hidden></div>
+        <div class="prompt-toolbar">
+          <button type="button" class="param-trigger" id="paramTrigger" aria-haspopup="true" aria-expanded="false"><span class="tb-mode" id="tbMode">文生图</span><span class="tb-params" id="tbParams">1:1 · Auto · 1K · 1张 · $—</span><span class="param-chevron" aria-hidden="true">⌄</span></button>
+          <button type="button" class="new-node-button" id="newNodeButton" aria-label="新增节点">＋ 新增节点</button>
+          <button class="generate-button" id="generateButton" disabled><span>✦</span> 开始生成 <b id="generateCount">1 张</b></button>
+          <button type="button" class="generate-button" id="editButton" hidden><span>✎</span> 编辑图片</button>
+        </div>
+        <div class="task-list" id="taskList" aria-live="polite"></div>
+      </section>
+      <div class="param-popover" id="paramPopover" hidden>
+        <div class="settings-heading"><span class="eyebrow">OUTPUT SETTINGS</span></div>
+        <div class="mode-switch" role="tablist"><button class="mode active" data-mode="text">文生图 <small>TEXT → IMAGE</small></button><button class="mode" data-mode="reference">图生图 <small>REFERENCE</small></button></div>
+        <div class="reference-box" id="referenceBox"><div class="field-label"><span>参考图</span><span id="refCount">0 / 8</span></div><label class="upload-zone" id="uploadZone" for="referenceImages"><span>＋</span><b>拖入、点击或粘贴参考图</b><small>PNG / JPEG / WEBP · 最多 8 张 · 可拖拽排序</small></label><input id="referenceImages" type="file" accept="image/png,image/jpeg,image/webp" multiple><div id="previewList" class="preview-list"></div></div>
+        <div class="control-section"><div class="field-label">图片分辨率</div><div class="segmented" id="tierOptions"><button data-value="1K">1K <small></small></button><button class="selected" data-value="2K">2K <small></small></button><button data-value="4K">4K <small></small></button></div></div>
+        <div class="control-section"><div class="field-label">图片质量</div><div class="segmented" id="qualityOptions"><button data-quality="auto">Auto <i>自动</i></button><button class="selected" data-quality="high">High <i>高</i></button><button data-quality="medium">Medium <i>中</i></button><button data-quality="low">Low <i>低</i></button></div></div>
+        <div class="control-section"><div class="field-label">画幅比例 <span id="sizeLabel">1536 × 2048</span></div><div class="ratio-grid" id="ratioOptions"><button data-value="auto"><i style="width:20px;height:20px;border:2px dashed rgba(214,255,95,.6);border-radius:4px"></i>自动</button><button data-value="1:1"><i style="width:20px;height:20px"></i>1:1</button><button data-value="16:9"><i style="width:24px;height:14px"></i>16:9</button><button data-value="9:16"><i style="width:14px;height:24px"></i>9:16</button><button data-value="4:3"><i style="width:22px;height:17px"></i>4:3</button><button class="selected" data-value="3:4"><i style="width:17px;height:22px"></i>3:4</button><button data-value="3:2"><i style="width:23px;height:15px"></i>3:2</button><button data-value="2:3"><i style="width:15px;height:23px"></i>2:3</button></div></div>
+        <div class="control-section quantity-row"><div><div class="field-label">生成数量</div><div class="quick-counts"><button data-count="1" class="selected">1</button><button data-count="2">2</button><button data-count="3">3</button><button data-count="4">4</button><button data-count="5">5</button><button data-count="6">6</button><button data-count="7">7</button><button data-count="8">8</button><button data-count="9">9</button></div></div></div>
+        <div class="cost-card"><div><span>预估费用</span><small>图片分辨率 × 生成数量</small></div><strong>$<span id="cost"></span></strong></div>
+      </div>
+    </main>
+  </div>
+
+  <div class="redeem-mask" id="redeemMask" hidden>
+    <div class="redeem-box" role="dialog" aria-modal="true" aria-label="兑换额度">
+      <div class="redeem-head"><span class="eyebrow">RECHARGE</span><button class="icon-button" id="redeemClose" type="button" aria-label="关闭">×</button></div>
+      <h2 class="redeem-title">兑换额度</h2>
+      <p class="redeem-sub">输入激活码，兑换后将自动累加到你的余额。</p>
+      <input class="admin-input" id="redeemInput" type="text" placeholder="例如：UCAN-ABCD-EFGH" autocomplete="off" spellcheck="false">
+      <div class="redeem-msg" id="redeemMsg"></div>
+      <div class="redeem-actions">
+        <a class="redeem-buy" id="redeemBuy" href="#" target="_blank" rel="noopener" hidden>购买额度<span class="buy-arrow">↗</span></a>
+        <button class="generate-button" id="redeemSubmit" type="button">确认兑换</button>
+      </div>
+      <div class="redeem-balance">当前余额：<b id="redeemBalance">$0.00</b></div>
+    </div>
+  </div>
+  <div class="image-lightbox" id="imageLightbox" hidden role="dialog" aria-modal="true" aria-label="图片预览">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="关闭图片预览">×</button>
+    <img id="lightboxImage" alt="全屏图片预览">
+    <div class="lightbox-footer">
+      <p class="lightbox-prompt" id="lightboxPrompt" hidden></p>
+      <div class="lightbox-actions">
+        <button type="button" id="lightboxCopyPrompt">复制提示词</button>
+        <button type="button" id="lightboxCopyImage">复制图片</button>
+        <button type="button" id="lightboxDownload">下载图片</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-root" id="modalRoot" hidden><div class="modal-backdrop" id="modalBackdrop"></div><div class="modal" role="dialog" aria-modal="true"><div class="modal-head"><span class="modal-title" id="modalTitle"></span><button type="button" class="icon-button" id="modalClose" aria-label="关闭">×</button></div><div class="modal-body" id="modalBody"></div><div class="modal-footer" id="modalFooter"></div></div></div>
+  <!-- 页面缩放控件：固定右下角，自身大小不随页面缩放 -->
+  <div id="page-zoom-ctl" title="调节页面大小（点击百分比还原 100%）">
+    <!-- 移动端专属：余额 + 兑换，与右侧按钮并排一行。数据源与顶部 balanceChip 相同；PC 端由 CSS 隐藏 -->
+    <button type="button" id="mobileBalance" class="mobile-balance" hidden aria-label="查看余额并兑换额度">
+      <span class="mb-label">◈</span><b id="mobileBalanceVal">$0.00</b><span class="mb-action">兑换</span>
+    </button>
+    <button type="button" id="pz-dec" class="pz-btn" title="缩小">-</button>
+    <span id="pz-val" class="pz-val">100%</span>
+    <button type="button" id="pz-inc" class="pz-btn" title="放大">+</button>
+    <span class="pz-divider" aria-hidden="true"></span>
+    <button type="button" id="pz-reset" class="pz-btn" title="重置画布位置（回到中心）" aria-label="重置画布位置">⌖</button>
+    <button type="button" id="pz-tidy" class="pz-btn" title="整理排版（在可见区域内整齐排列）" aria-label="整理排版">▦</button>
+  </div>
+  <div id="toastRoot" class="toast-root" aria-live="polite" aria-atomic="false"></div>
+  <!-- 底部公告滚动条：有公告才显示，短文本静态居中，长文本无缝横向循环滚动 -->
+  <div id="announcementBar" class="announcement-bar" hidden><div class="announcement-track" id="announcementTrack"></div></div>
+  <script src="{{ url_for('static', filename='app.js') }}?v=20260910i"></script>
+</body>
+</html>

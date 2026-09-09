@@ -1,0 +1,52 @@
+# ===== 数据与运行时（含真实用户数据、激活码、API Key、生成图，绝不上传）=====
+backend/data/
+backend/image_tasks.json
+backend/.wanfa_key
+cookies.txt
+
+# ===== Python 依赖与缓存 =====
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# ===== 备份文件 =====
+*.bak
+*.bak-*
+*.orig
+*.rej
+*.broken*
+*.old
+*.tmp
+
+# ===== 打包产物 =====
+*.zip
+*.tar.gz
+
+# ===== 本地开发辅助（非源码）=====
+probe_models.ps1
+test.html
+frontend/Test.html
+WSL打包指令.txt
+
+# ===== 文档草稿（含第三方 API 逆向分析，不公开）=====
+万法AI-GPT生图调用逻辑总结-*.md
+操蛋的叠加假象-*.md
+
+# ===== 根目录截图（backend/static/loading.png 不受影响）=====
+/*.png
+/*.jpg
+/*.jpeg
+
+# ===== 临时诊断脚本 =====
+_*.py
+_*.txt
+
+# ===== 系统与编辑器 =====
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
