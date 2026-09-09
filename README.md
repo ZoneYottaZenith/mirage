@@ -6,10 +6,6 @@
 </p>
 
 <p align="center">
-  <a href="https://mirage.ucan.asia"><b>🚀 在线体验 →</b></a>
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/Flask-3.x-000000?logo=flask&logoColor=white" alt="Flask">
   <img src="https://img.shields.io/badge/Frontend-Vanilla%20JS-F7DF1E?logo=javascript&logoColor=black" alt="Vanilla JS">
