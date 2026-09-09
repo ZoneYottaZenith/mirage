@@ -38,6 +38,18 @@
 
 ---
 
+## 界面预览
+
+<p align="center">
+  <img src="docs/images/Mirage02.png" alt="幻象工坊 · 无限画布工作台界面" width="100%">
+</p>
+
+<p align="center">
+  <sub>无限画布 · 节点自由拖拽 · 版本切换 · 参数面板</sub>
+</p>
+
+---
+
 ## 项目优势
 
 ### 一、高度可定制的中转站管理 ⭐
